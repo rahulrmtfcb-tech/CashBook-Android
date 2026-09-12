@@ -16,7 +16,10 @@ jobs:
 
       - name: Extract CashBook project
         run: |
-          ZIP="./CashBook-Android-V10.zip"
+          mkdir -p extracted
+          unzip -q "./CashBook-Android-V10.zip" -d extracted
+          echo "Extracted files:"
+          find extracted -maxdepth 3 -type f | head -100
 
       - name: Setup Java
         uses: actions/setup-java@v4
@@ -29,7 +32,9 @@ jobs:
 
       - name: Build APK
         working-directory: extracted/CashBookAndroid
-        run: gradle :app:assembleDebug --no-daemon
+        run: |
+          chmod +x gradlew
+          ./gradlew :app:assembleDebug --no-daemon
 
       - name: Upload APK
         uses: actions/upload-artifact@v4
