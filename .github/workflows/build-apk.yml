@@ -18,8 +18,25 @@ jobs:
         run: |
           mkdir -p extracted
           unzip -q "CashBook-Android-V14.3.1-ANIMATION-TUTORIAL-FIX.zip" -d extracted
-          echo "=== Project structure ==="
-          find extracted -maxdepth 4 -type f | head -200
+
+          echo "=== Extracted structure ==="
+          find extracted -maxdepth 5 -type f | head -300
+
+      - name: Find Android project
+        run: |
+          PROJECT_DIR=$(find extracted -name settings.gradle -o -name settings.gradle.kts | head -1)
+
+          if [ -z "$PROJECT_DIR" ]; then
+            echo "ERROR: Android project not found!"
+            exit 1
+          fi
+
+          PROJECT_DIR=$(dirname "$PROJECT_DIR")
+
+          echo "Android project found at:"
+          echo "$PROJECT_DIR"
+
+          echo "PROJECT_DIR=$PROJECT_DIR" >> "$GITHUB_ENV"
 
       - name: Setup Java
         uses: actions/setup-java@v5
@@ -31,18 +48,24 @@ jobs:
         uses: gradle/actions/setup-gradle@v4
 
       - name: Build APK
-        working-directory: extracted/CashBookAndroid
         run: |
-          chmod +x gradlew
-          ./gradlew :app:assembleDebug --no-daemon
+          cd "$PROJECT_DIR"
+
+          echo "=== Building from ==="
+          pwd
+
+          echo "=== Project files ==="
+          ls -la
+
+          if [ -f "./gradlew" ]; then
+            chmod +x ./gradlew
+            ./gradlew :app:assembleDebug --no-daemon
+          else
+            gradle :app:assembleDebug --no-daemon
+          fi
 
       - name: Upload APK
         uses: actions/upload-artifact@v4
         with:
           name: CashBook-debug-apk
-          path: extracted/CashBookAndroid/app/build/outputs/apk/debug/app-debug.apk
-      - name: Upload APK
-        uses: actions/upload-artifact@v4
-        with:
-          name: CashBook-debug-apk
-          path: extracted/CashBookAndroid/app/build/outputs/apk/debug/app-debug.apk
+          path: "**/app/build/outputs/apk/debug/app-debug.apk"
