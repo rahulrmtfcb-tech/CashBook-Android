@@ -17,7 +17,7 @@ jobs:
       - name: Extract CashBook project
         run: |
          mkdir -p extracted
-          unzip -q "./CashBook-Android-V14.3.zip" -d extracted echo "Extracted files:"
+          unzip -q "./CashBook-Android-V14.3.1-ANIMATION-TUTORIAL-FIX.zip" -d extracted echo "Extracted files:"
           find extracted -maxdepth 4 -type f | head -200
 
       - name: Setup Java
