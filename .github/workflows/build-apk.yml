@@ -17,7 +17,7 @@ jobs:
       - name: Extract CashBook project
         run: |
           mkdir -p extracted
-          unzip -q "CashBook-Android-V14.4.1-RMT-LOGO-FIX-COMPILE-FIX.zip" -d extracted
+          unzip -q "CashBook-Android-V14.4.2-RMT-LOGO-COMPILE-FIX.zip" -d extracted
 
           echo "=== Extracted structure ==="
           find extracted -maxdepth 5 -type f | head -300
